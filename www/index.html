@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مهامي</title>
+<style>
+  body { font-family: sans-serif; background: #0f172a; color: #fff; margin: 0; padding: 20px; }
+  h1 { text-align: center; }
+  .row { display: flex; gap: 8px; margin-bottom: 16px; }
+  input { flex: 1; padding: 12px; border-radius: 10px; border: 0; font-size: 16px; }
+  button { padding: 12px 18px; border: 0; border-radius: 10px; background: #22c55e; color: #fff; font-size: 16px; }
+  li { background: #1e293b; margin-bottom: 8px; padding: 14px; border-radius: 10px;
+       display: flex; justify-content: space-between; align-items: center; list-style: none; }
+  li.done span { text-decoration: line-through; opacity: .5; }
+  li button { background: #ef4444; padding: 6px 12px; }
+  ul { padding: 0; }
+</style>
+</head>
+<body>
+<h1>مهامي</h1>
+<div class="row">
+  <input id="t" placeholder="اكتب مهمة جديدة">
+  <button onclick="add()">إضافة</button>
+</div>
+<ul id="list"></ul>
+<script>
+  let tasks = JSON.parse(localStorage.getItem("tasks") || "[]");
+  function save() { localStorage.setItem("tasks", JSON.stringify(tasks)); render(); }
+  function add() {
+    const i = document.getElementById("t");
+    if (!i.value.trim()) return;
+    tasks.push({ text: i.value.trim(), done: false });
+    i.value = "";
+    save();
+  }
+  function toggle(n) { tasks[n].done = !tasks[n].done; save(); }
+  function del(n) { tasks.splice(n, 1); save(); }
+  function render() {
+    const l = document.getElementById("list");
+    l.innerHTML = "";
+    tasks.forEach((x, n) => {
+      const li = document.createElement("li");
+      if (x.done) li.className = "done";
+      const s = document.createElement("span");
+      s.textContent = x.text;
+      s.onclick = () => toggle(n);
+      const b = document.createElement("button");
+      b.textContent = "حذف";
+      b.onclick = () => del(n);
+      li.append(s, b);
+      l.appendChild(li);
+    });
+  }
+  render();
+</script>
+</body>
+</html>
